@@ -21,6 +21,8 @@ public class User {
     @JsonProperty("lastName")
     @Column(length = 20)
     private String lastName;
+    @JsonProperty("active")
+    private boolean active;
 
     public User() {
     }
@@ -63,5 +65,13 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
