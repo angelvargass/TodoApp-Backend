@@ -11,6 +11,7 @@ import vargas.angel.todo.exceptionhandler.exceptions.InvalidUserException;
 import vargas.angel.todo.services.UserService;
 import vargas.angel.todo.validators.UserValidator;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "/api/v1/users")
 public class UserController {
@@ -45,6 +46,21 @@ public class UserController {
             throw e;
         } catch (Exception e) {
             logger.error(e.getMessage());
+            throw e;
+        }
+    }
+
+    @PutMapping(path = "/activate")
+    public ResponseEntity<?> activateAccount(@NonNull @RequestBody User user) {
+        UserValidator userValidator = new UserValidator(user);
+
+        try {
+            userValidator.validateId();
+            userService.activateAccount(user);
+            return ResponseEntity.ok(200);
+        } catch (InvalidUserException e) {
+            throw e;
+        } catch (Exception e) {
             throw e;
         }
     }

@@ -22,6 +22,12 @@ public class UserValidator {
         validateName();
     }
 
+    public void validateId() {
+        if(user.getId() <= 0) {
+            throw new InvalidUserException(USER_ID_INVALID.toString());
+        }
+    }
+
     private void validateEmail() {
         Pattern pattern = Pattern.compile("^.+@.+\\..+$");
         Matcher matcher = pattern.matcher(user.getEmail());

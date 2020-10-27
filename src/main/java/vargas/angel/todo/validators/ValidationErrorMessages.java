@@ -5,7 +5,8 @@ public enum ValidationErrorMessages {
     USER_PASSWORD_LENGTH("Password must be 8 characters long"),
     USER_EMAIL_INVALID("Invalid email format"),
     USER_NAME_INVALID("Empty or invalid name format"),
-    USER_NAME_LENGTH("Name must be at least 3 characters long");
+    USER_NAME_LENGTH("Name must be at least 3 characters long"),
+    USER_ID_INVALID("Invalid ID");
 
     private final String error;
 

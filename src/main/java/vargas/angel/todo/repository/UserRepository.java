@@ -1,9 +1,18 @@
 package vargas.angel.todo.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import vargas.angel.todo.dto.User;
 
+import javax.transaction.Transactional;
+
 public interface UserRepository extends JpaRepository<User, Long> {
-    //User findByEmailAndActive(String email, boolean isActive);
     User findByEmailAndActiveIsTrue(String email);
+
+    @Transactional
+    @Modifying
+    @Query("update TBL_USER u set u.active = true where u.id = ?1")
+    void activateUserAccount(long id);
 }

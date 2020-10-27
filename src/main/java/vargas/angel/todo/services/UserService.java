@@ -43,4 +43,8 @@ public class UserService {
         }
         return null;
     }
+
+    public void activateAccount(User user) {
+        userRepository.activateUserAccount(user.getId());
+    }
 }
