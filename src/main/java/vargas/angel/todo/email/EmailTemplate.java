@@ -16,7 +16,7 @@ public class EmailTemplate {
 
         String emailBody;
         emailBody = "<p>" + user.getName() + " ,welcome to ETask</p>" +
-                "<a href=\"https://localhost:4200/activate?id=" + user.getId() + "\">" + "Click here to activate your account<a/>";
+                "<a href=\"https://localhost:4200/activate/" + user.getId() + "\">" + "Click here to activate your account<a/>";
         emailInformation.setMessage(emailBody);
         return emailInformation;
     }

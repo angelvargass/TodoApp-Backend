@@ -1,38 +1,36 @@
 package vargas.angel.todo.email;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class EmailProperties {
 
-    private static final Properties properties = new Properties();
-    private static final InputStream propertiesFile =
-            EmailProperties.class.getClassLoader().getResourceAsStream(
-                    "application.properties");
+    @Value("${mail.host}")
+    private String mailHost;
 
-    public EmailProperties() {
-        try {
-            properties.load(propertiesFile);
-        } catch (IOException e) {
+    @Value("${mail.port}")
+    private String mailPort;
 
-        }
-    }
+    @Value("${mail.username}")
+    private String mailUserName;
+
+    @Value("${mail.password}")
+    private String mailPassword;
 
     public String getHost() {
-        return properties.getProperty("mail.host");
+        return mailHost;
     }
 
     public int getSmtpport() {
-        return Integer.parseInt(properties.getProperty("mail.port"));
+        return Integer.parseInt(mailPort);
     }
 
     public String getUsername() {
-        return properties.getProperty("mail.username");
+        return mailUserName;
     }
 
     public String getPassword() {
-        return properties.getProperty("mail.password");
+        return mailPassword;
     }
 }

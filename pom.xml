@@ -52,14 +52,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-email</artifactId>
-			<version>1.5</version>
+			<groupId>org.simplejavamail</groupId>
+			<artifactId>simple-java-mail</artifactId>
+			<version>6.4.4</version>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>

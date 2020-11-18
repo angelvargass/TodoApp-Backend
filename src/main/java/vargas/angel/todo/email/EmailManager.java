@@ -1,33 +1,43 @@
 package vargas.angel.todo.email;
 
-import org.apache.commons.mail.*;
+import org.simplejavamail.api.email.Email;
+import org.simplejavamail.api.mailer.Mailer;
+import org.simplejavamail.email.EmailBuilder;
+import org.simplejavamail.mailer.MailerBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EmailManager {
 
-    private static final EmailProperties emailProperties = new EmailProperties();
+    private final EmailProperties emailProperties;
 
-    private final HtmlEmail email;
-
-    public EmailManager() throws EmailException {
-        email = new HtmlEmail();
-        email.setSSLOnConnect(true);
-        email.setHostName(emailProperties.getHost());
-        email.setSmtpPort(emailProperties.getSmtpport());
-        email.setAuthentication(emailProperties.getUsername(), emailProperties.getPassword());
-        email.setFrom(emailProperties.getUsername());
+    public EmailManager(EmailProperties emailProperties) {
+        this.emailProperties = emailProperties;
     }
 
-    public void sendEmail(EmailInformation emailInformation) throws EmailException {
-        email.addTo(emailInformation.getTo());
-        email.setSubject(emailInformation.getSubject());
-        email.setHtmlMsg(emailInformation.getMessage());
+    public void sendEmail(EmailInformation emailInformation) {
+        Email email = EmailBuilder.startingBlank()
+                .from("Etask", emailProperties.getUsername())
+                .to(emailInformation.getTo())
+                .withSubject(emailInformation.getSubject())
+                .withHTMLText(emailInformation.getMessage())
+                .buildEmail();
 
         if(emailInformation.getAttachment() != null) {
-            email.attach(emailInformation.getAttachment());
+            email.getAttachments().add(emailInformation.getAttachment());
         }
 
-        email.send();
+        buildMailer(email);
+    }
+
+    public void buildMailer(Email email) {
+        Mailer mailer = MailerBuilder
+                .withSMTPServer(emailProperties.getHost(), emailProperties.getSmtpport(),
+                        emailProperties.getUsername(), emailProperties.getPassword())
+                .async()
+                .withThreadPoolSize(20)
+                .buildMailer();
+
+        mailer.sendMail(email);
     }
 }

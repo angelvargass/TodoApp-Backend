@@ -1,16 +1,15 @@
 package vargas.angel.todo.email;
 
-import org.apache.commons.mail.EmailAttachment;
+import org.simplejavamail.api.email.AttachmentResource;
 
 public class EmailInformation {
 
     private String subject;
     private String to;
-    private EmailAttachment attachment;
+    private AttachmentResource attachment;
     private String message;
 
     public EmailInformation() {
-
     }
 
     public EmailInformation(String subject, String to, String message) {
@@ -35,11 +34,11 @@ public class EmailInformation {
         this.to = to;
     }
 
-    public EmailAttachment getAttachment() {
+    public AttachmentResource getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(EmailAttachment attachment) {
+    public void setAttachment(AttachmentResource attachment) {
         this.attachment = attachment;
     }
 

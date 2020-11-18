@@ -1,8 +1,6 @@
 package vargas.angel.todo.apicontrollers;
 
-import org.apache.commons.mail.EmailException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +14,7 @@ import vargas.angel.todo.validators.UserValidator;
 @RequestMapping(path = "/api/v1/users")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -34,19 +30,16 @@ public class UserController {
         }
     }
 
-    @PostMapping(path = "/sign-up")
-    public ResponseEntity<User> register(@NonNull @RequestBody User user) throws EmailException {
-        UserValidator userValidator = new UserValidator(user);
-
+    @PostMapping()
+    public ResponseEntity<?> register(@NonNull @RequestBody User user) {
         try {
-            userValidator.validate();
             user = userService.register(user);
             return ResponseEntity.ok(user);
         } catch (InvalidUserException e) {
-            throw e;
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            throw e;
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
