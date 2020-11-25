@@ -2,37 +2,32 @@ package vargas.angel.todo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-@Entity(name = "TBL_USER")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("id")
-    private long id;
+public class UserDto {
+    @NotNull(message = "Email cannot be null")
+    @Email(message = "Enter a valid email")
     @JsonProperty("email")
-    @Column(unique = true, length = 50)
     private String email;
+
+    @NotNull(message = "Password cannot be nul")
+    @Size(min = 8, message = "Password must be 8 characters long")
     @JsonProperty("password")
     private String password;
+
+    @NotNull(message = "Name cannot be null")
+    @Size(min = 3, message = "Name must be at least 3 characters long")
     @JsonProperty("name")
-    @Column(length = 20)
     private String name;
+
+    @NotNull(message = "Last name cannot be null")
+    @Size(min = 3, message = "Last name must be at least 3 characters long")
     @JsonProperty("lastName")
-    @Column(length = 20)
     private String lastName;
-    @JsonProperty("active")
-    private boolean active;
 
-    public User() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public UserDto() {
     }
 
     public String getEmail() {
@@ -65,13 +60,5 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 }

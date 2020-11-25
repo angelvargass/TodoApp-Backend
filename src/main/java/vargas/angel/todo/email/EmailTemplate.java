@@ -1,6 +1,6 @@
 package vargas.angel.todo.email;
 
-import vargas.angel.todo.dto.User;
+import vargas.angel.todo.entities.User;
 
 public class EmailTemplate {
 

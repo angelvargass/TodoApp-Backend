@@ -34,7 +34,6 @@ public class EmailManager {
         Mailer mailer = MailerBuilder
                 .withSMTPServer(emailProperties.getHost(), emailProperties.getSmtpport(),
                         emailProperties.getUsername(), emailProperties.getPassword())
-                .async()
                 .withThreadPoolSize(20)
                 .buildMailer();
 

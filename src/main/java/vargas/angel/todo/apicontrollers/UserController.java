@@ -1,60 +1,75 @@
 package vargas.angel.todo.apicontrollers;
 
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-import vargas.angel.todo.dto.User;
+import vargas.angel.todo.dto.UserDto;
+import vargas.angel.todo.entities.User;
 import vargas.angel.todo.exceptionhandler.exceptions.InvalidUserException;
 import vargas.angel.todo.services.UserService;
-import vargas.angel.todo.validators.UserValidator;
+
+import javax.validation.Valid;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "/api/v1/users")
 public class UserController {
 
-    private final UserService userService;
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    public UserController(UserService userService) {
+    private final UserService userService;
+    private final ModelMapper modelMapper;
+
+    public UserController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<User> login(@NonNull @RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody UserDto userDto) {
+        User user = convertToEntity(userDto);
         User dbUser = userService.login(user);
         if (dbUser != null) {
             return ResponseEntity.ok(dbUser);
         } else {
-            throw new InvalidUserException("Invalid credentials");
+            return new ResponseEntity<>(new InvalidUserException("Invalid credentials"),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping()
-    public ResponseEntity<?> register(@NonNull @RequestBody User user) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserDto userDto) {
+        User user = convertToEntity(userDto);
         try {
             user = userService.register(user);
-            return ResponseEntity.ok(user);
-        } catch (InvalidUserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+            return ResponseEntity.ok(convertToDto(user));
         }
         catch (Exception e) {
+            logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @PutMapping(path = "/activate")
-    public ResponseEntity<?> activateAccount(@NonNull @RequestBody User user) {
-        UserValidator userValidator = new UserValidator(user);
-
+    public ResponseEntity<?> activateAccount(@RequestBody UserDto userDto) {
+        User user = convertToEntity(userDto);
         try {
-            userValidator.validateId();
             userService.activateAccount(user);
             return ResponseEntity.ok(200);
-        } catch (InvalidUserException e) {
-            throw e;
         } catch (Exception e) {
-            throw e;
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    private User convertToEntity(UserDto userDto) {
+        return modelMapper.map(userDto, User.class);
+    }
+
+    private UserDto convertToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 }
