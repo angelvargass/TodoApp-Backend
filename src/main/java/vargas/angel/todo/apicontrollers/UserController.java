@@ -1,24 +1,21 @@
 package vargas.angel.todo.apicontrollers;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vargas.angel.todo.dto.UserDto;
 import vargas.angel.todo.entities.User;
-import vargas.angel.todo.exceptionhandler.exceptions.InvalidUserException;
 import vargas.angel.todo.services.UserService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "/api/v1/users")
 public class UserController {
-
-    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
     private final ModelMapper modelMapper;
@@ -29,40 +26,32 @@ public class UserController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<?> login(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> login(@RequestBody UserDto userDto) {
         User user = convertToEntity(userDto);
         User dbUser = userService.login(user);
-        if (dbUser != null) {
-            return ResponseEntity.ok(dbUser);
-        } else {
-            return new ResponseEntity<>(new InvalidUserException("Invalid credentials"),
-                    HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(convertToDto(dbUser), HttpStatus.ACCEPTED);
     }
 
     @PostMapping()
-    public ResponseEntity<?> register(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> register(@Valid @RequestBody UserDto userDto) {
         User user = convertToEntity(userDto);
-        try {
-            user = userService.register(user);
-            return ResponseEntity.ok(convertToDto(user));
-        }
-        catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        user = userService.register(user);
+        return new ResponseEntity<>(convertToDto(user), HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/activate")
-    public ResponseEntity<?> activateAccount(@RequestBody UserDto userDto) {
+    @PatchMapping(path = "/activate")
+    public ResponseEntity<HttpStatus> activateAccount(@RequestBody UserDto userDto) {
         User user = convertToEntity(userDto);
-        try {
-            userService.activateAccount(user);
-            return ResponseEntity.ok(200);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        userService.activateAccount(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<UserDto>> getUsers() {
+        List<UserDto> users = userService.getUsers().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     private User convertToEntity(UserDto userDto) {

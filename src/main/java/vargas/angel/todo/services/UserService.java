@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service;
 import vargas.angel.todo.entities.User;
 import vargas.angel.todo.email.EmailManager;
 import vargas.angel.todo.email.EmailTemplate;
+import vargas.angel.todo.exceptionhandler.exceptions.InvalidUserException;
 import vargas.angel.todo.repository.UserRepository;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -37,7 +40,11 @@ public class UserService {
                 return dbUser;
             }
         }
-        return null;
+        throw new InvalidUserException("Invalid credentials");
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
     public void activateAccount(User user) {

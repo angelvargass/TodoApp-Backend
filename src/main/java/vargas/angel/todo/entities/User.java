@@ -1,8 +1,10 @@
 package vargas.angel.todo.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
-@Entity(name = "TBL_USER")
+@Table(name = "TBL_USER")
+@Entity(name = "User")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +20,13 @@ public class User {
 
     @Column(length = 20)
     private String lastName;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Task> tasks;
 
     private boolean active;
 
@@ -62,6 +71,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public boolean isActive() {
