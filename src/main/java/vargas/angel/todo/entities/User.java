@@ -3,41 +3,42 @@ package vargas.angel.todo.entities;
 import javax.persistence.*;
 import java.util.List;
 
-@Table(name = "TBL_USER")
+@Table(name = "TBL_USERS")
 @Entity(name = "User")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true, length = 50)
+    @Column(unique = true, length = 50, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String lastName;
 
     @OneToMany(
             mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            fetch = FetchType.LAZY
     )
     private List<Task> tasks;
 
+    @Column
     private boolean active;
 
     public User() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,2 +1,3 @@
-package vargas.angel.todo.dto;public class TaskDto {
+package vargas.angel.todo.dto;
+public class TaskDto {
 }

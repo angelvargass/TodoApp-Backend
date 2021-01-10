@@ -6,12 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import vargas.angel.todo.entities.User;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByEmailAndActiveIsTrue(String email);
+    Optional<User> findByEmailAndActiveIsTrue(String email);
 
     @Transactional
     @Modifying
     @Query("update User u set u.active = true where u.id = ?1")
-    void activateUserAccount(long id);
+    void activateUserAccount(Long id);
 }
